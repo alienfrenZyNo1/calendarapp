@@ -1,7 +1,6 @@
 // ui/widgets/calendar_widget.dart
 import 'package:calendar_view/calendar_view.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
@@ -12,8 +11,7 @@ import '../../utils/logger.dart'; // Import logger
 
 class CalendarWidget extends StatefulWidget {
   final CalendarView currentView;
-  final void Function(CalendarView)?
-      onCurrentViewChange; // Define the callback function
+  final void Function(CalendarView)? onCurrentViewChange;
 
   const CalendarWidget({
     super.key,
@@ -24,7 +22,6 @@ class CalendarWidget extends StatefulWidget {
   @override
   CalendarWidgetState createState() => CalendarWidgetState();
 
-  // Define the method to handle the change in current view
   void updateCurrentView(CalendarView view) {
     if (onCurrentViewChange != null) {
       onCurrentViewChange!(view);
@@ -46,7 +43,6 @@ class CalendarWidgetState extends State<CalendarWidget> {
   @override
   void didUpdateWidget(CalendarWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // Update _currentView when receiving a new prop
     if (oldWidget.currentView != widget.currentView) {
       setState(() {
         _selectedDay = DateTime.now();
@@ -63,7 +59,6 @@ class CalendarWidgetState extends State<CalendarWidget> {
           _updateEvents(events);
           return _buildCalendar();
         } else {
-          // Handle other states such as loading or error
           logger.d('Loading events...');
           logger.d('Current state: $state');
           BlocProvider.of<CalendarBloc>(context).add(LoadEvents());
@@ -75,13 +70,13 @@ class CalendarWidgetState extends State<CalendarWidget> {
 
   void _updateEvents(List<CalendarEventModel> events) {
     final eventData = _mapEventsToEventData(events).toList();
-    _eventController.addAll(eventData); // Add all events to the controller
+    _eventController.addAll(eventData);
   }
 
   Iterable<CalendarEventData<Object?>> _mapEventsToEventData(
       List<CalendarEventModel> events) {
     return events.map((event) => CalendarEventData(
-          date: event.startDate, // Using start time as the date
+          date: event.startDate,
           title: event.title,
         ));
   }
@@ -89,39 +84,9 @@ class CalendarWidgetState extends State<CalendarWidget> {
   Widget _buildCalendar() {
     return Column(
       children: [
-        _buildCalendarControls(),
+        // No controls added here
         Expanded(
           child: _buildCalendarView(),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildCalendarControls() {
-    return Row(
-      children: [
-        DropdownButton<CalendarView>(
-          value: widget.currentView,
-          onChanged: (view) {
-            logger.d('Dropdown onChanged: Setting current view to $view');
-            // Notify parent widget about the change in view if the callback function is not null
-            widget.onCurrentViewChange
-                ?.call(view!); // Add null check with ?.call
-          },
-          items: const [
-            DropdownMenuItem(
-              value: CalendarView.month,
-              child: Text('Month'),
-            ),
-            DropdownMenuItem(
-              value: CalendarView.week,
-              child: Text('Week'),
-            ),
-            DropdownMenuItem(
-              value: CalendarView.day,
-              child: Text('Day'),
-            ),
-          ],
         ),
       ],
     );
@@ -174,7 +139,7 @@ class CalendarWidgetState extends State<CalendarWidget> {
   HeaderStyle _buildHeaderStyle() {
     return HeaderStyle(
       decoration: const BoxDecoration(
-        color: Colors.blue, // Set the background color
+        color: Colors.blue,
       ),
       leftIcon: IconButton(
         icon: const Icon(Icons.menu),
@@ -186,7 +151,6 @@ class CalendarWidgetState extends State<CalendarWidget> {
   }
 
   void _onDrawerOpen() {
-    // Implement the logic to open the drawer here
     logger.d('Drawer opened');
     Scaffold.of(context).openDrawer();
   }

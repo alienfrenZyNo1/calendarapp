@@ -1,0 +1,24 @@
+lib
+├── bloc
+│   └── calendar
+│       ├── calendar_bloc.dart
+│       ├── calendar_event.dart
+│       └── calendar_state.dart
+├── data
+│   └── repositories
+│       └── calendar_repository.dart
+├── main.dart
+├── models
+│   ├── calendar_event_model.dart
+│   └── calendar_view.dart
+├── ui
+│   ├── calendar_screen.dart
+│   ├── controllers
+│   └── widgets
+│       ├── calendar_drawer.dart
+│       ├── calendar_widget.dart
+│       └── event_tile.dart
+├── utils
+│   └── logger.dart
+└── zbackup
+    └── calendar_widget.dart.BAK
