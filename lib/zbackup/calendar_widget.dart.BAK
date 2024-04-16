@@ -1,0 +1,213 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:syncfusion_flutter_calendar/calendar.dart';
+
+import '../../bloc/calendar/calendar_bloc.dart';
+import '../../models/calendar_event_model.dart';
+
+class CalendarWidget extends StatefulWidget {
+  const CalendarWidget({super.key});
+
+  @override
+  _CalendarWidgetState createState() => _CalendarWidgetState();
+}
+
+class _CalendarWidgetState extends State<CalendarWidget> {
+  late CalendarController _calendarController;
+  late DateTime _selectedDay;
+  CalendarView _currentView = CalendarView.month;
+
+  @override
+  void initState() {
+    super.initState();
+    _calendarController = CalendarController();
+    _selectedDay = DateTime.now();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<CalendarBloc, CalendarState>(
+      builder: (context, state) {
+        if (state is LoadedState) {
+          final events = state.events;
+          return Column(
+            children: [
+              _buildCalendarControls(),
+              Expanded(
+                child: SfCalendar(
+                  controller: _calendarController,
+                  view: _currentView,
+                  dataSource: MeetingDataSource(_getDataSource(events)),
+                  monthViewSettings: const MonthViewSettings(
+                    appointmentDisplayMode:
+                        MonthAppointmentDisplayMode.appointment,
+                  ),
+                  initialSelectedDate:
+                      _currentView == CalendarView.day ? _selectedDay : null,
+                ),
+              ),
+            ],
+          );
+        } else {
+          BlocProvider.of<CalendarBloc>(context).add(LoadEvents());
+          return const Center(child: CircularProgressIndicator());
+        }
+      },
+    );
+  }
+
+  Widget _buildCalendarControls() {
+    return Row(
+      children: [
+        DropdownButton<CalendarView>(
+          value: _currentView,
+          onChanged: (view) {
+            setState(() {
+              _currentView = view!;
+              _calendarController.view = _currentView;
+            });
+          },
+          items: const [
+            DropdownMenuItem(
+              value: CalendarView.month,
+              child: Text('Month'),
+            ),
+            DropdownMenuItem(
+              value: CalendarView.week,
+              child: Text('Week'),
+            ),
+            DropdownMenuItem(
+              value: CalendarView.day,
+              child: Text('Day'),
+            ),
+          ],
+        ),
+        if (_currentView == CalendarView.month) ...[
+          _buildMonthDropdown(),
+          _buildYearDropdown(),
+        ],
+        if (_currentView == CalendarView.day)
+          IconButton(
+            icon: const Icon(Icons.calendar_today),
+            onPressed: _selectDay,
+          ),
+      ],
+    );
+  }
+
+  Widget _buildMonthDropdown() {
+    final List<String> monthNames = [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December'
+    ];
+
+    return DropdownButton<int>(
+      value: _calendarController.displayDate?.month ?? DateTime.now().month,
+      onChanged: (value) {
+        setState(() {
+          _calendarController.displayDate = DateTime(
+            _calendarController.displayDate!.year,
+            value!,
+            _calendarController.displayDate!.day,
+          );
+        });
+      },
+      items: List.generate(monthNames.length, (index) {
+        return DropdownMenuItem(
+          value: index + 1,
+          child: Text(monthNames[index]),
+        );
+      }),
+    );
+  }
+
+  Widget _buildYearDropdown() {
+    return DropdownButton<int>(
+      value: _calendarController.displayDate?.year ?? DateTime.now().year,
+      onChanged: (value) {
+        setState(() {
+          _calendarController.displayDate = DateTime(
+            value!,
+            _calendarController.displayDate!.month,
+            _calendarController.displayDate!.day,
+          );
+        });
+      },
+      items: List.generate(10, (index) {
+        return DropdownMenuItem(
+          value: DateTime.now().year - 5 + index,
+          child: Text('${DateTime.now().year - 5 + index}'),
+        );
+      }),
+    );
+  }
+
+  List<Meeting> _getDataSource(List<CalendarEventModel> events) {
+    return events
+        .map((event) => Meeting(
+              event.title,
+              event.startDate,
+              event.endDate,
+              Colors.blue,
+              false,
+            ))
+        .toList();
+  }
+
+  void _selectDay() async {
+    final selectedDate = await showDatePicker(
+      context: context,
+      initialDate: _selectedDay,
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+    );
+    if (selectedDate != null) {
+      setState(() {
+        _selectedDay = selectedDate;
+        _currentView = CalendarView.day;
+        _calendarController.displayDate = selectedDate;
+      });
+    }
+  }
+}
+
+class MeetingDataSource extends CalendarDataSource {
+  MeetingDataSource(List<Meeting> source) {
+    appointments = source;
+  }
+
+  @override
+  DateTime getStartTime(int index) => appointments![index].from;
+
+  @override
+  DateTime getEndTime(int index) => appointments![index].to;
+
+  @override
+  String getSubject(int index) => appointments![index].eventName;
+
+  @override
+  Color getColor(int index) => appointments![index].background;
+
+  @override
+  bool isAllDay(int index) => appointments![index].isAllDay;
+}
+
+class Meeting {
+  final String eventName;
+  final DateTime from;
+  final DateTime to;
+  final Color background;
+  final bool isAllDay;
+
+  Meeting(this.eventName, this.from, this.to, this.background, this.isAllDay);
+}
