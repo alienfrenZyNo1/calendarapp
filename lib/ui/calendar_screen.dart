@@ -6,8 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/calendar/calendar_bloc.dart';
 import '../models/calendar_view.dart';
 import 'widgets/calendar_drawer.dart';
-import 'widgets/calendar_widget.dart';
-import 'widgets/schedule_widget.dart'; // Import the ScheduleView widget
+import 'widgets/calendar_widget.dart'; // Import the ScheduleView widget
 import '../utils/logger.dart';
 
 class CalendarScreen extends StatelessWidget {

@@ -39,39 +39,6 @@ class ScheduleWidget extends StatelessWidget {
         ),
         title: const Text('Schedule'),
       ),
-      drawer: Drawer(
-        // Add your existing drawer implementation here
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            const DrawerHeader(
-              decoration: BoxDecoration(
-                color: Colors.blue,
-              ),
-              child: Text(
-                'Drawer Header',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
-                ),
-              ),
-            ),
-            ListTile(
-              title: const Text('Item 1'),
-              onTap: () {
-                // Update UI based on drawer item selection
-              },
-            ),
-            ListTile(
-              title: const Text('Item 2'),
-              onTap: () {
-                // Update UI based on drawer item selection
-              },
-            ),
-            // Add more ListTile widgets as needed
-          ],
-        ),
-      ),
       body: ListView.builder(
         itemCount: events.length,
         itemBuilder: (context, index) {
