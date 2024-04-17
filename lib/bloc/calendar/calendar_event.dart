@@ -40,3 +40,5 @@ class ChangeView extends CalendarEvent {
 }
 
 // Add more events like UpdateEvent etc. if needed
+
+class NavigateToScheduleView extends CalendarEvent {}

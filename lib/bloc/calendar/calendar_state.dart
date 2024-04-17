@@ -1,5 +1,6 @@
 // bloc/calendar/calendar_state.dart
 part of 'calendar_bloc.dart';
+// Import CalendarView
 
 @immutable
 abstract class CalendarState extends Equatable {
@@ -30,7 +31,6 @@ class ErrorState extends CalendarState {
   List<Object> get props => [message];
 }
 
-// Define a new state class to represent the change in calendar view
 class CalendarViewState extends CalendarState {
   final CalendarView view;
 

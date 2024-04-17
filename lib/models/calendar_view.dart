@@ -5,4 +5,5 @@ enum CalendarView {
   week,
   day,
   workWeek,
+  schedule,
 }

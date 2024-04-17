@@ -1,4 +1,5 @@
 // ui/widgets/calendar_widget.dart
+
 import 'package:calendar_view/calendar_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,6 +9,7 @@ import '../../bloc/calendar/calendar_bloc.dart';
 import '../../models/calendar_event_model.dart';
 import '../../models/calendar_view.dart';
 import '../../utils/logger.dart'; // Import logger
+import 'schedule_widget.dart'; // Import ScheduleWidget
 
 class CalendarWidget extends StatefulWidget {
   final CalendarView currentView;
@@ -129,8 +131,8 @@ class CalendarWidgetState extends State<CalendarWidget> {
               logger.d('Day View: Long pressed on $date'),
           headerStyle: headerStyle,
         );
-      case CalendarView.workWeek:
-        return Container(); // Placeholder for now
+      case CalendarView.schedule:
+        return const ScheduleWidget(); // Show ScheduleWidget for the schedule view
       default:
         return Container();
     }

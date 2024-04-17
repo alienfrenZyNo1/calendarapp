@@ -7,6 +7,7 @@ lib
 ├── data
 │   └── repositories
 │       └── calendar_repository.dart
+├── folderstructure.txt
 ├── main.dart
 ├── models
 │   ├── calendar_event_model.dart
@@ -17,7 +18,8 @@ lib
 │   └── widgets
 │       ├── calendar_drawer.dart
 │       ├── calendar_widget.dart
-│       └── event_tile.dart
+│       ├── event_tile.dart
+│       └── schedule_widget.dart
 ├── utils
 │   └── logger.dart
 └── zbackup

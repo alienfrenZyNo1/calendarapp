@@ -1,11 +1,10 @@
 // bloc/calendar/calendar_bloc.dart
+
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
-
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../data/repositories/calendar_repository.dart';
 import '../../models/calendar_event_model.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-
 import '../../models/calendar_view.dart';
 import '../../utils/logger.dart';
 
@@ -17,16 +16,15 @@ class CalendarBloc extends Bloc<CalendarEvent, CalendarState> {
 
   CalendarBloc(this.calendarRepository)
       : super(const CalendarViewState(CalendarView.month)) {
-    on<LoadEvents>((event, emit) => _handleLoadEvents(emit));
-
-    on<AddEvent>((event, emit) => _handleAddEvent(event, emit));
-
-    on<DeleteEvent>((event, emit) => _handleDeleteEvent(event, emit));
-
-    on<ChangeView>((event, emit) => _handleChangeView(event, emit));
+    on<LoadEvents>(_handleLoadEvents);
+    on<AddEvent>(_handleAddEvent);
+    on<DeleteEvent>(_handleDeleteEvent);
+    on<ChangeView>(_handleChangeView);
+    on<NavigateToScheduleView>(_handleNavigateToScheduleView);
   }
 
-  Future<void> _handleLoadEvents(Emitter<CalendarState> emit) async {
+  Future<void> _handleLoadEvents(
+      LoadEvents event, Emitter<CalendarState> emit) async {
     try {
       logger.d('Fetching events from repository...');
       final events = await calendarRepository.getEvents();
@@ -44,7 +42,7 @@ class CalendarBloc extends Bloc<CalendarEvent, CalendarState> {
     try {
       logger.d('Adding event: ${event.event}');
       await calendarRepository.addEvent(event.event);
-      await _handleLoadEvents(emit);
+      await _handleLoadEvents(LoadEvents(), emit);
     } catch (e) {
       _handleError(e, emit);
     }
@@ -55,7 +53,7 @@ class CalendarBloc extends Bloc<CalendarEvent, CalendarState> {
     try {
       logger.d('Deleting event with ID: ${event.eventId}');
       await calendarRepository.deleteEvent(event.eventId);
-      await _handleLoadEvents(emit);
+      await _handleLoadEvents(LoadEvents(), emit);
     } catch (e) {
       _handleError(e, emit);
     }
@@ -64,6 +62,13 @@ class CalendarBloc extends Bloc<CalendarEvent, CalendarState> {
   void _handleChangeView(ChangeView event, Emitter<CalendarState> emit) {
     logger.d('Changing calendar view to: ${event.view}');
     emit(CalendarViewState(event.view));
+  }
+
+  void _handleNavigateToScheduleView(
+      NavigateToScheduleView event, Emitter<CalendarState> emit) {
+    logger.d('Navigating to Schedule View');
+    emit(const CalendarViewState(
+        CalendarView.schedule)); // Emit CalendarViewState with Schedule view
   }
 
   void _handleError(dynamic error, Emitter<CalendarState> emit) {

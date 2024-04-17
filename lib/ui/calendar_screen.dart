@@ -1,4 +1,5 @@
 // ui/calendar_screen.dart
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -6,11 +7,12 @@ import '../bloc/calendar/calendar_bloc.dart';
 import '../models/calendar_view.dart';
 import 'widgets/calendar_drawer.dart';
 import 'widgets/calendar_widget.dart';
-import '../utils/logger.dart'; // Import logger
+import 'widgets/schedule_widget.dart'; // Import the ScheduleView widget
+import '../utils/logger.dart';
 
 class CalendarScreen extends StatelessWidget {
   const CalendarScreen({
-    super.key, // Add Key parameter to match the super constructor
+    super.key,
   });
 
   @override
@@ -26,35 +28,24 @@ class CalendarScreen extends StatelessWidget {
           logger.d('currentView: $currentView'); // Log the current state
           return Scaffold(
             body: SafeArea(
-              child: CalendarWidget(
-                currentView: currentView,
-                onCurrentViewChange: (view) {
-                  // Implement the logic to handle the change in current view
-                  // You can dispatch an event to update the calendar view in the bloc
-                  logger.d('Current view changed to: $view');
-                },
-              ),
+              child: _buildBody(context, currentView), // Call _buildBody method
             ),
             drawer: CalendarDrawer(
               currentView: currentView, // Pass the current view to the drawer
               onMonthViewTap: () {
-                logger.d('Switching to Month view...');
-                BlocProvider.of<CalendarBloc>(context)
-                    .add(const ChangeView(CalendarView.month));
-                Navigator.of(context)
-                    .pop(); // Close the drawer after switching view
+                _switchToView(context, CalendarView.month);
               },
               onWeekViewTap: () {
-                logger.d('Switching to Week view...');
-                BlocProvider.of<CalendarBloc>(context)
-                    .add(const ChangeView(CalendarView.week));
-                Navigator.of(context)
-                    .pop(); // Close the drawer after switching view
+                _switchToView(context, CalendarView.week);
               },
               onDayViewTap: () {
-                logger.d('Switching to Day view...');
+                _switchToView(context, CalendarView.day);
+              },
+              onScheduleViewTap: () {
+                // Handle tapping on Schedule View
+                logger.d('Navigating to Schedule view...');
                 BlocProvider.of<CalendarBloc>(context)
-                    .add(const ChangeView(CalendarView.day));
+                    .add(NavigateToScheduleView());
                 Navigator.of(context)
                     .pop(); // Close the drawer after switching view
               },
@@ -69,4 +60,23 @@ class CalendarScreen extends StatelessWidget {
       },
     );
   }
+
+  // Method to build the body based on the current view
+  Widget _buildBody(BuildContext context, CalendarView currentView) {
+    return CalendarWidget(
+      currentView: currentView,
+      onCurrentViewChange: (view) {
+        // Implement the logic to handle the change in current view
+        // You can dispatch an event to update the calendar view in the bloc
+        logger.d('Current view changed to: $view');
+      },
+    );
+  }
+}
+
+// Method to switch to a different calendar view
+void _switchToView(BuildContext context, CalendarView view) {
+  logger.d('Switching to $view view...');
+  BlocProvider.of<CalendarBloc>(context).add(ChangeView(view));
+  Navigator.of(context).pop(); // Close the drawer after switching view
 }

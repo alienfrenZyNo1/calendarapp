@@ -1,0 +1,53 @@
+// ui/widgets/schedule_widget.dart
+
+import 'package:flutter/material.dart';
+
+class ScheduleWidget extends StatelessWidget {
+  const ScheduleWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // Mock list of events for testing
+    List<Event> events = [
+      Event(
+          title: 'Meeting',
+          startTime: const TimeOfDay(hour: 9, minute: 0),
+          endTime: const TimeOfDay(hour: 10, minute: 0)),
+      Event(
+          title: 'Lunch',
+          startTime: const TimeOfDay(hour: 12, minute: 0),
+          endTime: const TimeOfDay(hour: 13, minute: 0)),
+      Event(
+          title: 'Presentation',
+          startTime: const TimeOfDay(hour: 14, minute: 0),
+          endTime: const TimeOfDay(hour: 15, minute: 0)),
+      Event(
+          title: 'Training',
+          startTime: const TimeOfDay(hour: 16, minute: 0),
+          endTime: const TimeOfDay(hour: 17, minute: 0)),
+    ];
+
+    return ListView.builder(
+      itemCount: events.length,
+      itemBuilder: (context, index) {
+        final event = events[index];
+        return ListTile(
+          title: Text(event.title),
+          subtitle: Text(
+              '${event.startTime.format(context)} - ${event.endTime.format(context)}'),
+          onTap: () {
+            // Add functionality to handle tapping on events
+          },
+        );
+      },
+    );
+  }
+}
+
+class Event {
+  final String title;
+  final TimeOfDay startTime;
+  final TimeOfDay endTime;
+
+  Event({required this.title, required this.startTime, required this.endTime});
+}

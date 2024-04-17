@@ -8,6 +8,7 @@ class CalendarDrawer extends StatelessWidget {
   final VoidCallback onMonthViewTap;
   final VoidCallback onWeekViewTap;
   final VoidCallback onDayViewTap;
+  final VoidCallback onScheduleViewTap; // Add this named parameter
 
   const CalendarDrawer({
     super.key,
@@ -15,6 +16,7 @@ class CalendarDrawer extends StatelessWidget {
     required this.onWeekViewTap,
     required this.onDayViewTap,
     required CalendarView currentView,
+    required this.onScheduleViewTap, // Initialize the named parameter
   });
 
   @override
@@ -34,6 +36,13 @@ class CalendarDrawer extends StatelessWidget {
                 fontSize: 24,
               ),
             ),
+          ),
+          ListTile(
+            title: const Text('Schedule View'),
+            onTap: () {
+              logger.d('Month View tapped');
+              onScheduleViewTap();
+            }, // Use the provided callback for Schedule View tap
           ),
           ListTile(
             title: const Text('Month View'),
